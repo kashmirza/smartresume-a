@@ -54,11 +54,11 @@ app.add_middleware(
 )
 
 # Include Routers under /api/v1
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(resume_router, prefix="/api/v1")
-app.include_router(job_router, prefix="/api/v1")
-app.include_router(analysis_router, prefix="/api/v1")
-app.include_router(dashboard_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api")
+app.include_router(resume_router, prefix="/api")
+app.include_router(job_router, prefix="/api")
+app.include_router(analysis_router, prefix="/api")
+app.include_router(dashboard_router, prefix="/api")
 
 
 @app.get("/", tags=["Root"])
@@ -76,7 +76,7 @@ async def root():
 
 
 @app.get("/health", tags=["Health Check"])
-@app.get("/api/v1/health", tags=["Health Check"])
+@app.get("/api/health", tags=["Health Check"])
 async def health_check():
     """
     Health check endpoint reporting application and database connectivity status.
