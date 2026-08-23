@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[coder]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+venv/
+env/
+.venv/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node/Frontend
+node_modules/
+frontend/build/
+frontend/.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test/Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# MongoDB
+*.bson
+*.mongodata
