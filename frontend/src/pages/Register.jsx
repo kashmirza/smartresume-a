@@ -29,13 +29,19 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      await register({
+      const res = await register({
         full_name: fullName,
         email,
         password,
         career_level: careerLevel,
         target_role: targetRole
       });
+      if (res?.access_token || res?.token) {
+        localStorage.setItem('token', res.access_token || res.token);
+      }
+      if (res?.user) {
+        localStorage.setItem('user', JSON.stringify(res.user));
+      }
       navigate('/dashboard');
     } catch (err) {
       console.error('Registration failed:', err);

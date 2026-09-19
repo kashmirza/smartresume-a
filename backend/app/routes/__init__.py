@@ -1,3 +1,7 @@
+"""
+Router exports for SmartResume AI backend API.
+"""
+
 from app.routes.auth import router as auth_router
 from app.routes.resume import router as resume_router
 from app.routes.job import router as job_router

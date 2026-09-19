@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import ResumeForm from '../components/ResumeForm';
+import ResumeForm, { initialResumeState } from '../components/ResumeForm';
 import ResumePreview from '../components/ResumePreview';
 import { resumeAPI } from '../services/api';
 
@@ -9,7 +9,7 @@ export default function CreateResume() {
   const resumeId = searchParams.get('id');
   const navigate = useNavigate();
 
-  const [resumeData, setResumeData] = useState(null);
+  const [resumeData, setResumeData] = useState(initialResumeState);
   const [selectedTemplate, setSelectedTemplate] = useState('ats_classic');
   const [saving, setSubmitting] = useState(false);
   const [toast, setToast] = useState('');
@@ -19,7 +19,8 @@ export default function CreateResume() {
     if (resumeId) {
       resumeAPI.get(resumeId)
         .then((res) => {
-          if (res.data) setResumeData(res.data);
+          const data = res.data?.data || res.data;
+          if (data) setResumeData(data);
         })
         .catch((err) => console.error('Error fetching resume:', err));
     }
@@ -35,8 +36,9 @@ export default function CreateResume() {
       } else {
         const res = await resumeAPI.create(updatedData);
         setToast('Resume created successfully!');
-        if (res.data?.id) {
-          navigate(`/create-resume?id=${res.data.id}`, { replace: true });
+        const data = res.data?.data || res.data;
+        if (data?.id) {
+          navigate(`/create-resume?id=${data.id}`, { replace: true });
         }
       }
     } catch (err) {
@@ -48,24 +50,55 @@ export default function CreateResume() {
     }
   };
 
+  const printResumeOnly = () => {
+    // Ensure the preview is rendered, then print (CSS limits output to the resume only)
+    const wasView = viewMode;
+    setViewMode('preview');
+    setTimeout(() => {
+      window.print();
+      setViewMode(wasView);
+    }, 300);
+  };
+
   const handleDownload = async (templateKey) => {
     setToast('Preparing PDF download...');
+    let savedId = resumeId;
     try {
-      if (resumeId) {
-        const res = await resumeAPI.download(resumeId, templateKey, 'pdf');
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${resumeData?.title || 'SmartResume'}.pdf`);
-        document.body.appendChild(link);
-        link.click();
+      // If the resume has never been saved, save it first so the backend can render a real PDF
+      if (!savedId) {
+        setSubmitting(true);
+        const res = await resumeAPI.create(resumeData);
+        const data = res.data?.data || res.data;
+        if (data?.id) {
+          savedId = data.id;
+          setResumeData(data);
+          navigate(`/create-resume?id=${savedId}`, { replace: true });
+        }
+      }
+      if (savedId) {
+        const res = await resumeAPI.download(savedId, templateKey, 'pdf');
+        const contentType = res.headers?.['content-type'] || '';
+        if (contentType.includes('application/pdf')) {
+          const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `${(resumeData?.title || 'SmartResume').replace(/[^A-Za-z0-9_-]+/g, '_')}.pdf`);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        } else {
+          // Backend returned JSON instead of a PDF - fall back to browser print of the resume
+          printResumeOnly();
+        }
       } else {
-        window.print();
+        printResumeOnly();
       }
     } catch (err) {
       console.error('Download error:', err);
-      window.print();
+      printResumeOnly();
     } finally {
+      setSubmitting(false);
       setTimeout(() => setToast(''), 3000);
     }
   };

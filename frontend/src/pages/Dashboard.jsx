@@ -23,11 +23,19 @@ export default function Dashboard() {
         ]);
 
         if (statsRes?.data) {
-          setStats(statsRes.data);
+          const statsData = statsRes.data.data || statsRes.data;
+          setStats({
+            avgAtsScore: statsData.avg_ats_score ?? statsData.avgAtsScore ?? 88,
+            avgJobMatch: statsData.avg_job_match ?? statsData.avgJobMatch ?? 92,
+            totalResumes: statsData.total_resumes ?? statsData.totalResumes ?? 0,
+            trackedApplications: statsData.total_jobs ?? statsData.trackedApplications ?? 0,
+            ...statsData
+          });
         }
 
-        if (resumesRes?.data && Array.isArray(resumesRes.data)) {
-          setRecentResumes(resumesRes.data);
+        const resumeList = resumesRes?.data?.resumes || (Array.isArray(resumesRes?.data) ? resumesRes.data : null);
+        if (resumeList && Array.isArray(resumeList)) {
+          setRecentResumes(resumeList);
         } else {
           // Fallback mock resumes
           setRecentResumes([
@@ -86,7 +94,7 @@ export default function Dashboard() {
         <div className="card">
           <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Active Resumes</div>
           <div style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0.25rem 0' }}>{stats.totalResumes}</div>
-          <span className="badge badge-neutral" style={{ fontSize: '0.6875rem' }}>3 Versions</span>
+          <span className="badge badge-neutral" style={{ fontSize: '0.6875rem' }}>{stats.totalResumes} Versions</span>
         </div>
 
         <div className="card">

@@ -225,3 +225,34 @@ a {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* ============ Print: only the resume preview, not the whole app ============ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .resume-print-area,
+  .resume-print-area * {
+    visibility: visible;
+  }
+  .resume-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  @page {
+    margin: 12mm;
+  }
+}
+
+/* Hide helper UI (toolbars, buttons) when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

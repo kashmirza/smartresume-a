@@ -21,9 +21,9 @@ export default function ResumePreview({ data, selectedTemplate, onTemplateChange
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="resume-print-area" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Template Selector Toolbar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.875rem 1.25rem', border: '1px solid #e2e8f0', borderRadius: '0.5rem 0.5rem 0 0', flexWrap: 'wrap', gap: '0.75rem' }}>
+      <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.875rem 1.25rem', border: '1px solid #e2e8f0', borderRadius: '0.5rem 0.5rem 0 0', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#64748b' }}>TEMPLATE:</span>
           <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }}>

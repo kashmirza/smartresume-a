@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const initialResumeState = {
+export const initialResumeState = {
   title: 'Senior Software Engineer CV',
   personal: {
     fullName: 'Alex Morgan',
@@ -107,7 +107,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
   const updatePersonal = (field, value) => {
     onChange({
       ...formData,
-      personal: { ...formData.personal, [field]: value }
+      personal: { ...(formData?.personal || {}), [field]: value }
     });
   };
 
@@ -115,14 +115,14 @@ export default function ResumeForm({ data, onChange, onSave }) {
     onChange({
       ...formData,
       sectionsEnabled: {
-        ...formData.sectionsEnabled,
-        [sectionKey]: !formData.sectionsEnabled[sectionKey]
+        ...(formData?.sectionsEnabled || {}),
+        [sectionKey]: !(formData?.sectionsEnabled?.[sectionKey])
       }
     });
   };
 
   const handleArrayAdd = (key, defaultItem) => {
-    const list = formData[key] || [];
+    const list = formData?.[key] || [];
     onChange({
       ...formData,
       [key]: [...list, { ...defaultItem, id: Date.now() }]
@@ -130,13 +130,13 @@ export default function ResumeForm({ data, onChange, onSave }) {
   };
 
   const handleArrayUpdate = (key, id, field, value) => {
-    const list = formData[key] || [];
+    const list = formData?.[key] || [];
     const updated = list.map((item) => (item.id === id ? { ...item, [field]: value } : item));
     onChange({ ...formData, [key]: updated });
   };
 
   const handleArrayRemove = (key, id) => {
-    const list = formData[key] || [];
+    const list = formData?.[key] || [];
     onChange({ ...formData, [key]: list.filter((item) => item.id !== id) });
   };
 
@@ -201,7 +201,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
               <input
                 type="text"
                 className="form-input"
-                value={formData.title || ''}
+                value={formData?.title || ''}
                 onChange={(e) => onChange({ ...formData, title: e.target.value })}
                 placeholder="e.g. Senior Frontend Engineer Resume"
               />
@@ -213,7 +213,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.fullName || ''}
+                  value={formData?.personal?.fullName || ''}
                   onChange={(e) => updatePersonal('fullName', e.target.value)}
                   placeholder="John Doe"
                 />
@@ -223,7 +223,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.jobTitle || ''}
+                  value={formData?.personal?.jobTitle || ''}
                   onChange={(e) => updatePersonal('jobTitle', e.target.value)}
                   placeholder="Software Engineer"
                 />
@@ -236,7 +236,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="email"
                   className="form-input"
-                  value={formData.personal.email || ''}
+                  value={formData?.personal?.email || ''}
                   onChange={(e) => updatePersonal('email', e.target.value)}
                 />
               </div>
@@ -245,7 +245,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.phone || ''}
+                  value={formData?.personal?.phone || ''}
                   onChange={(e) => updatePersonal('phone', e.target.value)}
                 />
               </div>
@@ -257,7 +257,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.location || ''}
+                  value={formData?.personal?.location || ''}
                   onChange={(e) => updatePersonal('location', e.target.value)}
                 />
               </div>
@@ -266,7 +266,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.linkedin || ''}
+                  value={formData?.personal?.linkedin || ''}
                   onChange={(e) => updatePersonal('linkedin', e.target.value)}
                 />
               </div>
@@ -278,7 +278,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.github || ''}
+                  value={formData?.personal?.github || ''}
                   onChange={(e) => updatePersonal('github', e.target.value)}
                 />
               </div>
@@ -287,7 +287,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                 <input
                   type="text"
                   className="form-input"
-                  value={formData.personal.portfolio || ''}
+                  value={formData?.personal?.portfolio || ''}
                   onChange={(e) => updatePersonal('portfolio', e.target.value)}
                 />
               </div>
@@ -307,7 +307,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                   onClick={() => {
                     onChange({
                       ...formData,
-                      summary: `High-performing ${formData.personal.jobTitle || 'Professional'} with proven success driving impactful initiatives, streamlining workflows, and optimizing core operational metrics. Skilled in cross-functional collaboration and technical innovation.`
+                      summary: `High-performing ${formData?.personal?.jobTitle || 'Professional'} with proven success driving impactful initiatives, streamlining workflows, and optimizing core operational metrics. Skilled in cross-functional collaboration and technical innovation.`
                     });
                   }}
                 >
@@ -317,7 +317,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
               <textarea
                 className="form-textarea"
                 rows="5"
-                value={formData.summary || ''}
+                value={formData?.summary || ''}
                 onChange={(e) => onChange({ ...formData, summary: e.target.value })}
                 placeholder="Write 2-4 sentences highlighting your years of experience, core expertise, and key measurable achievements..."
               />
@@ -349,7 +349,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
               </button>
             </div>
 
-            {(formData.experience || []).map((exp, index) => (
+            {(formData?.experience || []).map((exp, index) => (
               <div key={exp.id || index} style={{ border: '1px solid #e2e8f0', borderRadius: '0.5rem', padding: '1rem', marginBottom: '1rem', background: '#fafafa' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                   <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>Position #{index + 1}</span>
@@ -367,7 +367,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={exp.company}
+                      value={exp.company || ''}
                       onChange={(e) => handleArrayUpdate('experience', exp.id, 'company', e.target.value)}
                     />
                   </div>
@@ -376,7 +376,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={exp.position}
+                      value={exp.position || ''}
                       onChange={(e) => handleArrayUpdate('experience', exp.id, 'position', e.target.value)}
                     />
                   </div>
@@ -388,7 +388,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                       type="text"
                       className="form-input"
                       placeholder="e.g. 2021-03"
-                      value={exp.startDate}
+                      value={exp.startDate || ''}
                       onChange={(e) => handleArrayUpdate('experience', exp.id, 'startDate', e.target.value)}
                     />
                   </div>
@@ -398,7 +398,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                       type="text"
                       className="form-input"
                       placeholder="e.g. Present"
-                      value={exp.endDate}
+                      value={exp.endDate || ''}
                       onChange={(e) => handleArrayUpdate('experience', exp.id, 'endDate', e.target.value)}
                     />
                   </div>
@@ -408,7 +408,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                   <textarea
                     className="form-textarea"
                     rows="3"
-                    value={exp.description}
+                    value={exp.description || ''}
                     onChange={(e) => handleArrayUpdate('experience', exp.id, 'description', e.target.value)}
                     placeholder="• Achieved 30% speedup by optimizing database queries&#10;• Led team of 5 engineers..."
                   />
@@ -442,7 +442,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
               </button>
             </div>
 
-            {(formData.education || []).map((edu, index) => (
+            {(formData?.education || []).map((edu, index) => (
               <div key={edu.id || index} style={{ border: '1px solid #e2e8f0', borderRadius: '0.5rem', padding: '1rem', marginBottom: '1rem', background: '#fafafa' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                   <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>Education #{index + 1}</span>
@@ -460,7 +460,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={edu.institution}
+                      value={edu.institution || ''}
                       onChange={(e) => handleArrayUpdate('education', edu.id, 'institution', e.target.value)}
                     />
                   </div>
@@ -469,7 +469,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={edu.degree}
+                      value={edu.degree || ''}
                       onChange={(e) => handleArrayUpdate('education', edu.id, 'degree', e.target.value)}
                     />
                   </div>
@@ -480,7 +480,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={edu.field}
+                      value={edu.field || ''}
                       onChange={(e) => handleArrayUpdate('education', edu.id, 'field', e.target.value)}
                     />
                   </div>
@@ -489,7 +489,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={edu.endDate}
+                      value={edu.endDate || ''}
                       onChange={(e) => handleArrayUpdate('education', edu.id, 'endDate', e.target.value)}
                     />
                   </div>
@@ -516,32 +516,32 @@ export default function ResumeForm({ data, onChange, onSave }) {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-              {(formData.skills || []).map((sk, index) => (
-                <div key={sk.id || index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: '#f8fafc', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #e2e8f0' }}>
+              {(formData?.skills || []).map((sk, index) => (
+                <div key={sk.id || index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
                   <input
                     type="text"
                     className="form-input"
-                    style={{ flex: 1, padding: '0.375rem 0.5rem' }}
-                    value={sk.name}
+                    style={{ flex: 1 }}
+                    placeholder="e.g. React.js"
+                    value={sk.name || ''}
                     onChange={(e) => handleArrayUpdate('skills', sk.id, 'name', e.target.value)}
-                    placeholder="Skill name"
                   />
                   <select
                     className="form-select"
-                    style={{ width: '110px', padding: '0.375rem 0.25rem' }}
+                    style={{ width: '110px' }}
                     value={sk.category || 'Technical'}
                     onChange={(e) => handleArrayUpdate('skills', sk.id, 'category', e.target.value)}
                   >
                     <option value="Technical">Technical</option>
                     <option value="Tools">Tools</option>
-                    <option value="Soft">Soft</option>
+                    <option value="Soft">Soft Skills</option>
                   </select>
                   <button
                     type="button"
                     onClick={() => handleArrayRemove('skills', sk.id)}
-                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0 4px' }}
+                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1rem' }}
                   >
-                    ✕
+                    ×
                   </button>
                 </div>
               ))}
@@ -565,7 +565,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
               </button>
             </div>
 
-            {(formData.projects || []).map((proj, index) => (
+            {(formData?.projects || []).map((proj, index) => (
               <div key={proj.id || index} style={{ border: '1px solid #e2e8f0', borderRadius: '0.5rem', padding: '1rem', marginBottom: '1rem', background: '#fafafa' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                   <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>Project #{index + 1}</span>
@@ -583,7 +583,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     <input
                       type="text"
                       className="form-input"
-                      value={proj.name}
+                      value={proj.name || ''}
                       onChange={(e) => handleArrayUpdate('projects', proj.id, 'name', e.target.value)}
                     />
                   </div>
@@ -593,7 +593,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                       type="text"
                       className="form-input"
                       placeholder="React, Python, AWS"
-                      value={proj.techStack}
+                      value={proj.techStack || ''}
                       onChange={(e) => handleArrayUpdate('projects', proj.id, 'techStack', e.target.value)}
                     />
                   </div>
@@ -603,7 +603,7 @@ export default function ResumeForm({ data, onChange, onSave }) {
                   <textarea
                     className="form-textarea"
                     rows="2"
-                    value={proj.description}
+                    value={proj.description || ''}
                     onChange={(e) => handleArrayUpdate('projects', proj.id, 'description', e.target.value)}
                   />
                 </div>
@@ -635,12 +635,12 @@ export default function ResumeForm({ data, onChange, onSave }) {
                     border: '1px solid #e2e8f0',
                     borderRadius: '0.5rem',
                     cursor: 'pointer',
-                    background: formData.sectionsEnabled[sec.key] ? '#eff6ff' : '#ffffff'
+                    background: formData?.sectionsEnabled?.[sec.key] ? '#eff6ff' : '#ffffff'
                   }}
                 >
                   <input
                     type="checkbox"
-                    checked={!!formData.sectionsEnabled[sec.key]}
+                    checked={!!formData?.sectionsEnabled?.[sec.key]}
                     onChange={() => toggleSection(sec.key)}
                   />
                   <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a' }}>{sec.label}</span>

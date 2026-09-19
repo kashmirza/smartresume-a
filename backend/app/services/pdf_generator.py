@@ -107,7 +107,7 @@ class PDFGenerator:
 
                     bullets = exp.get("highlights") or exp.get("bullets") or exp.get("description", [])
                     if isinstance(bullets, str):
-                        bullets = [bullets]
+                        bullets = [b.strip().lstrip("\u2022").strip() for b in bullets.split("\n") if b.strip().lstrip("\u2022").strip()]
 
                     for bullet in bullets:
                         if bullet and str(bullet).strip():
@@ -120,7 +120,13 @@ class PDFGenerator:
         if skills:
             self._add_section_header("TECHNICAL SKILLS", template, styles, story)
             if isinstance(skills, list):
-                skills_str = ", ".join([str(s) for s in skills if s])
+                skill_names = []
+                for s in skills:
+                    if isinstance(s, dict):
+                        skill_names.append(str(s.get("name") or s.get("skill") or "").strip())
+                    elif s:
+                        skill_names.append(str(s).strip())
+                skills_str = ", ".join([s for s in skill_names if s])
                 story.append(Paragraph(skills_str, styles["BodyText"]))
             elif isinstance(skills, dict):
                 for category, cat_skills in skills.items():
@@ -421,8 +427,13 @@ class PDFGenerator:
 
     def _build_header(self, data: Dict[str, Any], template: str, styles: Dict[str, Any], story: List[Any]):
         """Render header with candidate name and contact information."""
-        contact = data.get("contact", {}) or data.get("contact_info", {})
-        name = contact.get("name") or data.get("name", "APPLICANT NAME")
+        contact = data.get("contact", {}) or data.get("contact_info", {}) or data.get("personal", {}) or {}
+        name = (
+            contact.get("name")
+            or contact.get("fullName")
+            or data.get("name")
+            or "APPLICANT NAME"
+        )
 
         story.append(Paragraph(f"<b>{name.upper()}</b>", styles["Title"]))
         story.append(Spacer(1, 4))

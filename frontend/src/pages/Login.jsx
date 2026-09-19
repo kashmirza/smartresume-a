@@ -17,7 +17,13 @@ export default function Login() {
     setSubmitting(true);
 
     try {
-      await login({ email, password });
+      const res = await login({ email, password });
+      if (res?.access_token || res?.token) {
+        localStorage.setItem('token', res.access_token || res.token);
+      }
+      if (res?.user) {
+        localStorage.setItem('user', JSON.stringify(res.user));
+      }
       navigate('/dashboard');
     } catch (err) {
       console.error('Login failed:', err);
