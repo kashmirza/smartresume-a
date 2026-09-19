@@ -20,7 +20,6 @@ from .security import (
     get_current_user,
     hash_password,
     oauth2_scheme,
-    pwd_context,
     verify_password,
 )
 from .validators import (
@@ -34,7 +33,6 @@ from .validators import (
 
 __all__ = [
     # Security utilities
-    "pwd_context",
     "hash_password",
     "verify_password",
     "create_access_token",
