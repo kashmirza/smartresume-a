@@ -9,29 +9,30 @@ from datetime import datetime, timedelta, timezone
 import logging
 from typing import Any, Dict, Optional
 
+import bcrypt as _bcrypt
 from bson import ObjectId
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.config.settings import settings
 from app.config.database import get_collection
 
 logger = logging.getLogger(__name__)
 
-# Password hashing context using bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 # OAuth2 scheme for swagger UI and standard bearer auth
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 
 def hash_password(password: str) -> str:
-    """Hash a plain text password using bcrypt."""
+    """Hash a plain text password using bcrypt directly (passlib-compatible format)."""
     if not password or not isinstance(password, str):
         raise ValueError("Password must be a non-empty string.")
-    return pwd_context.hash(password)
+    # bcrypt only accepts passwords up to 72 bytes
+    password_bytes = password.encode("utf-8")[:72]
+    salt = _bcrypt.gensalt(rounds=12)
+    hashed = _bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -39,7 +40,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     if not plain_password or not hashed_password:
         return False
     try:
-        return pwd_context.verify(plain_password, hashed_password)
+        password_bytes = plain_password.encode("utf-8")[:72]
+        hashed_bytes = hashed_password.encode("utf-8")
+        return _bcrypt.checkpw(password_bytes, hashed_bytes)
     except Exception as e:
         logger.warning(f"Error verifying password hash: {e}")
         return False
